@@ -1,61 +1,56 @@
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
 
-bool comp(const pair<int,int>& a, const pair<int,int>& b) {
-    return a.second < b.second;
-}
+// sort intervals by end time (second column)
+void sortByEnd(int arr[][2], int n)
+{
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (arr[i][1] > arr[j][1])
+            {
+                // swap both start and end to keep the pair together
+                int s = arr[i][0];
+                int e = arr[i][1];
 
-vector<pair<int,int>> ActSelect(const vector<pair<int,int>> & activities) {
-    int n = (int)activities.size();
-    vector<pair<int,int>> A;
+                arr[i][0] = arr[j][0];
+                arr[i][1] = arr[j][1];
 
-    if(n==0) {
-        return A;
-    }
-    A.push_back(activities[0]);
-
-    int k = 0;
-    for(int m =1;m<n;m++) {
-        if(activities[m].first>=activities[k].second) {
-            A.push_back(activities[m]);
-            k=m;
+                arr[j][0] = s;
+                arr[j][1] = e;
+            }
         }
     }
-    return A;
 }
 
-int main() {
-    vector<pair<int,int>> activities = {
+int main()
+{
+    int arr[][2] = {
         {1, 4},
         {3, 5},
         {0, 6},
         {5, 7},
-        {3, 9},
-        {5, 9},
-        {6, 10},
-        {8, 11},
-        {8, 12},
-        {2, 14},
-        {12, 16}
-    };
+        {8, 9},
+        {2, 14}};
 
-    sort(activities.begin(), activities.end(), comp);
+    int n = sizeof(arr) / sizeof(arr[0]);
 
-    vector<pair<int,int>> selected =ActSelect(activities);
+    sortByEnd(arr, n);
 
-    cout << "Selected activities (start, finish):\n";
-    for (size_t i = 0; i < selected.size(); i++) {
-        cout << "(" << selected[i].first << ", " << selected[i].second << ")\n";
+    // greedy activity selection
+    // always take the first (earliest finishing) interval
+    int lastEnd = arr[0][1];
+    cout << "start: " << arr[0][0] << " end: " << arr[0][1] << '\n';
+
+    for (int i = 1; i < n; i++)
+    {
+        if (arr[i][0] >= lastEnd)
+        {
+            cout << "start: " << arr[i][0] << " end: " << arr[i][1] << '\n';
+            lastEnd = arr[i][1];
+        }
     }
-
-    cout << "Maximum number of non-overlapping activities = "
-         << selected.size() << endl;
-
-
-    
-
-
-
 
     return 0;
 }
